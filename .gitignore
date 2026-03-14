@@ -1,0 +1,47 @@
+# --- PYTHON (Lo más importante para tu automatización) ---
+# Ignora las carpetas de ejecución de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignora los entornos virtuales (¡nunca se suben!)
+.venv/
+venv/
+ENV/
+bin/
+lib/
+
+# --- SISTEMA OPERATIVO ---
+# Archivos invisibles de Windows y Mac
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- HACKING ÉTICO & SEGURIDAD ---
+# Archivos de capturas de red (suelen ser enormes)
+*.pcap
+*.pcapng
+*.cap
+
+# Archivos de logs y resultados temporales
+*.log
+*.report
+nmap/*.xml
+nmap/*.nmap
+
+# Archivos sensibles (¡No queremos fugas de información!)
+.env
+secretos.txt
+passwords.txt
+*.key
+*.pem
+
+# Diccionarios (No subas el rockyou.txt, pesa demasiado)
+*.wordlist
+*.dict
+*.txt_ext
+
+# --- EDITORES DE CÓDIGO ---
+.vscode/
+.idea/
+*.ovpn

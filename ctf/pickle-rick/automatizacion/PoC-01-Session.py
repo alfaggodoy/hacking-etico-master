@@ -4,7 +4,7 @@ import requests as re
 sesion = re.Session()
 
 # Defino las constantes del PoC de requests + session
-LOGIN_ENDPOINT = 'http://10.128.161.83/login.php'
+LOGIN_ENDPOINT = 'http://10.128.167.86/login.php'
 CREDENCIALES = {
 	'username' : 'R1ckRul3s',
 	'password': 'Wubbalubbadubdub'

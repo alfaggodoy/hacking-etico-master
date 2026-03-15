@@ -1,6 +1,6 @@
 import requests as re
 
-respuesta = re.post('http://10.128.161.83/')
+respuesta = re.post('http://10.128.167.86/')
 
 if respuesta.status_code == 200:
 	print('Conexion establecida. Imprimiendo respuesta:')

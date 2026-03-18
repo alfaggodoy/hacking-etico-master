@@ -45,3 +45,7 @@ passwords.txt
 .vscode/
 .idea/
 *.ovpn
+
+# Evitar subir claves SSH personalizadas
+*llave*
+*.pub

@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  twisted-ctf_6_7_8_9_10:
+    build: .
+    container_name: twisted_ctf_6_7_8_9_10
+    ports:
+      - "9006:9006"
+      - "9007:9007"
+      - "9008:9008"
+      - "9009:9009"
+      - "9010:9010"
+    restart: unless-stopped

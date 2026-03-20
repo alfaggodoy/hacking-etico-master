@@ -1,126 +1,218 @@
-PROJECT: Pickle Rick CTF Exploitation Automation
+<h1 align="center">🥒 Operación "Pickle Rick": Desarrollo Autopwn</h1>
 
-Author: Student Project
-Purpose: Learning / Cybersecurity Practice
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.x-blue.svg?logo=python&logoColor=white" alt="Python 3">
+  <img src="https://img.shields.io/badge/Módulo-Hacking%20Ético-darkred.svg?logo=hackthebox&logoColor=white" alt="Hacking Ético">
+  <img src="https://img.shields.io/badge/Grado-Máster%20en%20Ciberseguridad-gold.svg" alt="Máster Ciberseguridad">
+  <img src="https://img.shields.io/badge/Base-ASIR-informational?logo=linux&logoColor=white" alt="Base ASIR">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT">
+</p>
 
---------------------------------------------------
-PROJECT DESCRIPTION
---------------------------------------------------
+<p align="center">
+  <i>Memoria de Arquitectura Ofensiva. Desarrollo de Tooling nativo (Python) para automatización total (0-clicks) en el ecosistema Pickle Rick (TryHackMe).</i>
+</p>
 
-This project consists of automating the exploitation process of the
-"Pickle Rick" CTF machine after it has already been solved manually.
+---
 
-The goal is not to discover vulnerabilities but to recreate the
-attack chain programmatically using Python.
+> [!WARNING]
+> **Aviso Legal y de Responsabilidad (Disclaimer Ético)**
+> Este artefacto de penetración automatizada ha sido diseñado y programado exclusivamente con fines de investigación académica ("Hacking Ético") para la evaluación del **Máster en Ciberseguridad**. La ejecución de `autoprick.py` sobre activos o infraestructuras sin consentimiento previo y expreso (*Rules of Engagement*) contraviene los marcos legales vigentes. El autor se exime de cualquier responsabilidad por el uso ilícito de este código.
 
-The script reproduces the same steps that were previously performed
-during manual exploitation of the machine.
+---
 
-This exercise focuses on improving skills in:
+## 📑 Índice
+1. [Resumen Ejecutivo e Introducción (Contexto Máster)](#-1-resumen-ejecutivo-e-introducción-contexto-máster)
+2. [Vectores de Ataque (OWASP y MITRE)](#-2-vectores-de-ataque-owasp-y-mitre)
+3. [Arquitectura Python y Módulos Nativos](#-3-arquitectura-python-y-módulos-nativos)
+4. [Diagrama de Flujo y Sincronismo](#-4-diagrama-de-flujo-y-sincronismo)
+5. [Despliegue y Ejecución Interactiva (PoC)](#-5-despliegue-y-ejecución-interactiva-poc)
+6. [Estructura del Proyecto Ofensivo](#-6-estructura-del-proyecto-ofensivo)
+7. [Problemas de Red Resueltos en la Etapa de Diseño](#-7-problemas-de-red-resueltos-en-la-etapa-de-diseño)
+8. [Conclusión, Impacto y Bibliografía](#-8-conclusión-impacto-y-bibliografía)
 
-- HTTP traffic analysis
-- Exploit automation
-- Python scripting for offensive security
-- Session management
-- Reverse shells
-- Threading and parallel execution
-- Linux privilege escalation
-- Persistence techniques
+---
 
---------------------------------------------------
-ATTACK FLOW
---------------------------------------------------
+## 📌 1. Resumen Ejecutivo e Introducción (Contexto Máster)
 
-The automated script performs the following steps:
+La presente memoria documenta el diseño, desarrollo y validación de una herramienta ofensiva *custom* (`autoprick.py`), creada desde cero para el módulo de Hacking Ético. El objetivo de este proyecto de Máster no es simplemente "resolver un CTF", sino **demostrar la capacidad de desarrollar *Tooling* (herramientas propias) para equipos *Red Team***.
 
-1. Send an HTTP POST request to authenticate in the web application
-2. Maintain the session using cookies
-3. Interact with the vulnerable command portal
-4. Execute commands remotely
-5. Trigger a reverse shell to the attacker machine
-6. Start a listener to receive the shell
-7. Escalate privileges to root
-8. Create a persistent user with sudo privileges
-9. Install SSH public key access
-10. Connect to the system using SSH
+Viniendo de una formación base en **Administración de Sistemas (ASIR)**, se ha aplicado el conocimiento profundo del *Kernel* Linux y las redes TCP/IP para orquestar un ataque que trasciende el uso de herramientas de terceros (como *Metasploit*). El paradigma implementado es el ***Autopwn***: una ejecución asíncrona y automatizada que encadena de forma ininterrumpida todas las fases de la infiltración (reconocimiento, explotación, escalada y persistencia), transformando una vulnerabilidad web en una bóveda de control total SSH.
 
---------------------------------------------------
-PROJECT STRUCTURE
---------------------------------------------------
+---
 
-project/
+## 🎯 2. Vectores de Ataque (OWASP y MITRE)
 
-│
-├── exploit.py
-│   Main script that automates the exploitation process
-│
-├── enunciado.md
-│   Exercise description and step-by-step learning guide
-│
-└── README.txt
-    Project documentation
+El *script* mecaniza la explotación de fallas críticas catalogadas en los máximos estándares de la industria de la Ciberseguridad:
 
---------------------------------------------------
-TECHNOLOGIES USED
---------------------------------------------------
+- [x] **Information Exposure & Broken Authentication:** Lectura del código fuente y del archivo restrictivo `robots.txt` para forjar un inicio de sesión no autorizado. *(OWASP A01:2021 / A04:2021)*.
+- [x] **Command Injection (RCE):** Evasión de las directivas de seguridad web mediante *payloads* en Base64 para abrir una terminal remota (*Reverse Shell*) por el puente TCP. *(OWASP A03:2021)*.
+- [x] **Privilege Escalation:** Elevación de contexto desde `www-data` a `root` explotando la mala asignación de privilegios en el archivo `sudoers` (*MITRE TA0004*).
+- [x] **Account Manipulation (Persistencia):** Creación local del usuario administrativo `gacker` e inyección parasitaria de claves asimétricas RSA (*MITRE TA0003*).
+- [x] **Estabilización a TTY Interactiva:** Abandono del entorno inestable y llamada nativa del *framework* OpenSSH del cliente.
 
-Python 3
+---
 
-Main Python concepts used:
+## 🧠 3. Arquitectura Python y Módulos Nativos
 
-- requests library
-- HTTP sessions
-- sockets
-- threading
-- subprocess execution
+La herramienta ha sido programada exclusivamente sobre la *Standard Library* de Python 3. Esto garantiza un código aséptico, indetectable por firmas hash simples y 100% portable.
 
-Operating system concepts:
+| Módulo Escogido | Justificación del Desarrollo (Bajo Nivel) |
+| :--- | :--- |
+| `requests` | Gestión del estado (`Stateful`). Al utilizar `requests.Session()`, el *script* mantiene orgánicamente la validación de la cookie (Token `PHPSESSID`) burlando los controles de autenticación posteriores. |
+| `socket` | Apertura programada de las interfaces de red del Atacante. Se encarga de levantar el servicio receptor (`bind`, `listen`, `accept`) y acoplar el flujo de comandos a la *Bash* del objetivo. |
+| `threading` | Evasión de bloqueos secuenciales. La petición HTTP de una Reverse Shell por naturaleza se queda "colgada" esperando respuesta. Aislar la escucha del puerto en un sub-hilo permite concurrencia pura. |
+| `base64` | Transcodificación de la carga maliciosa para eludir Listas Negras (WAFs) del servidor PHP, impidiendo el truncamiento de caracteres funcionales del sistema, como comodines (`*`), pipes (`|`) o *ampersands* (`&`). |
+| `subprocess` & `os` | Llamadas directas a binarios Posix del anfitrión. Utilizado para orquestar comandos del sistema emitiendo los pares de curvas criptográficas (`ssh-keygen`), controlar permisos (`chmod`) y pivotar sobre `ssh`. |
 
-- Linux command execution
-- reverse shells
-- sudo privilege escalation
-- SSH key authentication
+---
 
---------------------------------------------------
-LEARNING OBJECTIVES
---------------------------------------------------
+## 🔥 4. Diagrama de Flujo y Sincronismo
 
-This project helps reinforce practical skills in:
+Representación del ciclo de vida del *exploit* marcando el diseño *multithreading* (Hilos), esencial para la programación de redes ofensivas.
 
-• Web request analysis
-• Exploit development
-• Automation of attack chains
-• Post-exploitation techniques
-• Persistence methods
-• Red team scripting
+```text
+ 🚀 [ BINARIO CENTRAL: INVOCACIÓN (CLI ARGPARSE) ]
+                 │
+                 ▼
+ 🌐 [ FASE 1: Autenticación HTTP e Inteligencia ]
+    ├─> Extracción de OSINT (`robots.txt`, DOM Parsing).
+    └─> Emisión POST a `/login.php` ➜ Captura de Tokens de estado.
+                 │
+                 ▼
+ 🧵 [ FASE 2: Concurrencia (Multithreading) ]
+    ├─> Hilo Secundario: Inicia el *Listen Socket* en el puerto LPORT.
+    └─> Hilo Principal : Inyecta la carga explosiva codificada por Base64.
+                 │
+                 ▼
+ 💻 [ FASE 3: Túnel Reverse Shell TCP ]
+    └─> Entrelazamiento del flujo (Pipes STDIN/STDOUT) entre Atacante y Víctima.
+                 │
+                 ▼
+ 💀 [ FASE 4: Escalada a Root (Privilege Escalation) ]
+    └─> Inyección automática del mandato absoluto: `sudo su`
+                 │
+                 ▼
+ 👤 [ FASE 5: Operaciones de Administración (Persistencia local) ]
+    ├─> `useradd -m -s /bin/bash gacker` (Nacimiento de usuario fantasma).
+    └─> `usermod -aG sudo gacker` (Acople al anillo de administradores).
+                 │
+                 ▼
+ 🔐 [ FASE 6: Algoritmo Asimétrico RSA ]
+    ├─> Atacante: Genera par de claves locales (`llave_gacker`).
+    └─> Víctima : Reescribe silenciosamente su archivo `authorized_keys`.
+                 │
+                 ▼
+ 🎯 [ FASE 7: Transición Ininterrumpida ]
+    ├─> Destrucción silente del Socket asíncrono temporal.
+    └─> Integración Posix PTY: `os.system("ssh -i llave_gacker gacker@<IP>")`
+                 │
+                 ▼
+ 🎉 [ ACCESO TOTAL: Consolidación SSH del Auditor y Captura de Flag ]
+```
 
---------------------------------------------------
-REQUIREMENTS
---------------------------------------------------
+---
 
-Recommended environment:
+## 💻 5. Despliegue y Ejecución Interactiva (PoC)
 
-Attacker machine:
-- Linux
-- Python 3
-- netcat
+El archivo *Python* ha sido auditado en el laboratorio virtual contra la red interna de TryHackMe y ejecutado desde una distribución GNU/Linux basada en Debian (preferiblemente Kali O.S. o Parrot Sec.).
 
-Python libraries:
+> [!NOTE]
+> Para preparar el entorno local, clone el proyecto, asigne privilegios e instale las dependencias necesarias.
+> ```bash
+> pip3 install -r requirements.txt
+> chmod +x automatizacion/autoprick.py
+> ```
 
-requests
+<details>
+<summary><b>▸ Paso 1: Interfaz Profesional (Click para expandir Menú CLI)</b></summary>
+<br>
 
-Install with:
+Aprovechando la librería `argparse`, la herramienta interactúa corporativamente con el auditor, validando las Banderas y limitando errores humanos tipográficos.
 
-pip install requests
+```bash
+$ python3 autoprick.py --help
+usage: autoprick.py [-h] -t TARGET -l LHOST -p LPORT [-v]
 
---------------------------------------------------
-DISCLAIMER
---------------------------------------------------
+Script ofensivo para explotación 100% automatizada
+```
+> *(Anexo Visual Sugerido - `imagenes/ayuda.png`)*
+<div align="center">
+  <img src="imagenes/ayuda.png" alt="Menú de Ayuda CLI" width="80%"/>
+</div>
+</details>
 
-This project is intended strictly for educational purposes.
+<details open>
+<summary><b>▸ Paso 2: Ejecución Real (Proof of Concept)</b></summary>
+<br>
 
-All techniques demonstrated here must only be used in controlled
-laboratory environments such as CTF platforms or machines that
-you have explicit permission to test.
+El operador despacha el binario designando la Interfaz atacante (VPN) y el puerto de captura:
+```bash
+python3 autoprick.py --target 10.10.x.x --lhost tun0 --lport 4444 --verbose
+```
+El log estándar (*Stdout*) verbalizará el colapso secuencial del servidor. El encriptado de la sesión, la inyección concurrente y el bypasseo final resultarán instanciando al operador dentro del núcleo como usuario Root en menos de 3 segundos interactivos.
 
-Unauthorized use of these techniques against real systems is illegal.
+> *(Anexo Visual Sugerido - `imagenes/poc.png`)*
+<div align="center">
+  <img src="imagenes/poc.png" alt="Ejecución y Escalada SSH" width="80%"/>
+</div>
+</details>
+
+---
+
+## 📁 6. Estructura del Proyecto Ofensivo
+
+La orquestación se compone de un ecosistema estandarizado de ficheros para facilitar el testeo de los tutores de Hacking Ético:
+
+```text
+PickleRick_Autopwn/
+├── automatizacion/
+│   └── autoprick.py        # Código fuente documentado en Python 3 puro.
+├── imagenes/               # Pruebas de validación dinámicas del ataque.
+│   ├── ayuda.png           # Captura del uso parametrizable de las flags (-h).
+│   └── poc.png             # Captura del resultado en vivo de la reverse shell.
+├── README.md               # Base explicativa documental (Arquitectura y Memoria).
+└── requirements.txt        # Dependencias exactas (Librerías HTTP Requests).
+```
+
+---
+
+## 🚧 7. Problemas de Red Resueltos en la Etapa de Diseño
+
+Al programar un *script* que inyecta comandos a través la red contra un recurso alojado en una VPN, me encontré con obstáculos reales de comunicación OSI. Decidí implementar las siguientes soluciones de Ingeniería a nivel de código para no depender de fallos humanos:
+
+* **Emulación de la tecla "Intro" en la Shell (`\n`):**
+    Cuando capturamos la conexión de la consola (*Reverse Shell*), no estamos ante una terminal normal y amigable (no hay interactividad *TTY*). Si la rutina de Python escupe todos los comandos de administración a la vez (`useradd`, `echo` de la clave SSH, etc.), el servidor ubuntu remoto se satura intentando leerlos como si fueran una sola palabra altísima y colapsa.
+    Para asegurar su digestión, programé que se añadiera un salto de línea (`\n`) y codificación de bytes `.encode()` explícitamente al final de cada envío. Esto simula milimétricamente una pulsación "Enter":
+    ```diff
+    -  # Envío crudo: La Shell remota lo recibe todo junto como texto y colapsa.
+    -  conexion.send(b"useradd -m -s /bin/bash gacker")
+    +  # Envío limpio: El salto de línea obligando al Kernel remoto a ejecutar la orden.
+    +  conexion.send(b"useradd -m -s /bin/bash gacker\n")
+    ```
+
+* **El problema de la Sincronización de Puertos (*Race Conditions*):** 
+    Mi arquitectura se divide en dos Hilos de ejecución. Uno abre mi puerto escuchando peticiones, y el otro envía la inyección web a TryHackMe. En el laboratorio experimenté que a veces el servidor de Londres respondía **antes** de que mi máquina local estuviera escuchando plenamente, causando un fallo letal. 
+    Para reparar esta fuga de tiempo (*Race Condition*), añadí quirúrgicamente un `time.sleep(1)` en mi hilo. Mi puerto obtiene así una ventaja de 1 segundo de inicio estricto ante el servidor, asegurando que capture absolutamente siempre la inyección sin perder ningún paquete TCP.
+
+* **La política extrema de permisos de la clave SSH (`0600`):** 
+    Al invocar los comandos de Linux, el archivo de clave generada (`llave_gacker`) lo hereda con permisos de lectura abierta. Por políticas puras de seguridad *"Zero-Trust"*, el programa y cliente `OpenSSH` bloquean radicalmente el intento de conexión detectando una posible fuga.
+    Como mi meta era la automatización 100%, utilicé directamente una llamada al sistema: `os.chmod(PATH, 0o600)`. Dicha orden restringe matemáticamente la llave obligando al programa criptográfico a confiar ciegamente en ella, y sellando así un acceso interactivo sin obstáculos.
+
+---
+
+## ✅ 8. Conclusión, Impacto y Bibliografía
+
+El desarrollo de la operación `autoprick.py` sobrepasa con notoriedad el clásico acercamiento de *testeo de penetración manual*, suponiendo una demostración pragmática y empírica de lo que significa pivotar desde las ciencias de la **Administración de Sistemas Informáticos en Red (ASIR)** al eslabón avanzado del **Máster en Ciberseguridad Ofensiva**.
+
+La conversión de una vulnerabilidad web mundana (*Broken Access Control*) en un programa ofuscado capaz de controlar dinámicamente el asincronismo de los *Sockets TCP*, orquestar configuraciones nativas de grupos DAC a ciegas en un sistema remoto, y autogestionar y transitar a la criptografía de curvas asimétricas para su persistencia total, certifica una aptitud formativa soberana. Este hito corrobora que para dominar la seguridad de una *host*, primero se debe concebir cómo funciona su núcleo bajo el capó. El auditor no solo vulnera, ahora, mediante ingeniería de código, automatiza su capacidad letal.
+
+### 📚 Bibliografía de Apoyo Corporativo
+* *The Open Web Application Security Project*. [OWASP Top 10 Vulnerabilities](https://owasp.org/Top10/).
+* *MITRE Corporation*. Matrices Tácticas y Técnicas Empresariales [MITRE ATT&CK®](https://attack.mitre.org/).
+* *Fundación Python*. Documentación Core sobre [*concurrencia y Sockets IPC*](https://docs.python.org/es/3/library/ipc.html).
+* *Exposición de Laboratorio:* [TryHackMe - Pickle Rick CTF](https://tryhackme.com/room/picklerick).
+
+<hr>
+<p align="center">
+  <i>Desarrollado como memoria técnica para el módulo de Hacking Ético.</i>
+</p>

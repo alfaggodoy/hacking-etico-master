@@ -44,7 +44,6 @@ Viniendo de una formación base en **Administración de Sistemas (ASIR)**, se ha
 
 El *script* mecaniza la explotación de fallas críticas catalogadas en los máximos estándares de la industria de la Ciberseguridad:
 
-- [x] **Information Exposure & Broken Authentication:** Lectura del código fuente y del archivo restrictivo `robots.txt` para forjar un inicio de sesión no autorizado. *(OWASP A01:2021 / A04:2021)*.
 - [x] **Command Injection (RCE):** Evasión de las directivas de seguridad web mediante *payloads* en Base64 para abrir una terminal remota (*Reverse Shell*) por el puente TCP. *(OWASP A03:2021)*.
 - [x] **Privilege Escalation:** Elevación de contexto desde `www-data` a `root` explotando la mala asignación de privilegios en el archivo `sudoers` (*MITRE TA0004*).
 - [x] **Account Manipulation (Persistencia):** Creación local del usuario administrativo `gacker` e inyección parasitaria de claves asimétricas RSA (*MITRE TA0003*).
@@ -61,7 +60,7 @@ La herramienta ha sido programada exclusivamente sobre la *Standard Library* de 
 | `requests` | Gestión del estado (`Stateful`). Al utilizar `requests.Session()`, el *script* mantiene orgánicamente la validación de la cookie (Token `PHPSESSID`) burlando los controles de autenticación posteriores. |
 | `socket` | Apertura programada de las interfaces de red del Atacante. Se encarga de levantar el servicio receptor (`bind`, `listen`, `accept`) y acoplar el flujo de comandos a la *Bash* del objetivo. |
 | `threading` | Evasión de bloqueos secuenciales. La petición HTTP de una Reverse Shell por naturaleza se queda "colgada" esperando respuesta. Aislar la escucha del puerto en un sub-hilo permite concurrencia pura. |
-| `base64` | Transcodificación de la carga maliciosa para eludir Listas Negras (WAFs) del servidor PHP, impidiendo el truncamiento de caracteres funcionales del sistema, como comodines (`*`), pipes (`|`) o *ampersands* (`&`). |
+| `base64` | Transcodificación de la carga maliciosa para eludir Listas Negras (WAFs) del servidor PHP, impidiendo el truncamiento de caracteres funcionales del sistema, como comodines (`*`), pipes (&#124;) o *ampersands* (`&`). |
 | `subprocess` & `os` | Llamadas directas a binarios Posix del anfitrión. Utilizado para orquestar comandos del sistema emitiendo los pares de curvas criptográficas (`ssh-keygen`), controlar permisos (`chmod`) y pivotar sobre `ssh`. |
 
 ---
@@ -75,7 +74,7 @@ Representación del ciclo de vida del *exploit* marcando el diseño *multithread
                  │
                  ▼
  🌐 [ FASE 1: Autenticación HTTP e Inteligencia ]
-    ├─> Extracción de OSINT (`robots.txt`, DOM Parsing).
+    ├─> Inicialización de gestor de estados (`requests.Session()`).
     └─> Emisión POST a `/login.php` ➜ Captura de Tokens de estado.
                  │
                  ▼
@@ -93,18 +92,18 @@ Representación del ciclo de vida del *exploit* marcando el diseño *multithread
                  │
                  ▼
  👤 [ FASE 5: Operaciones de Administración (Persistencia local) ]
-    ├─> `useradd -m -s /bin/bash gacker` (Nacimiento de usuario fantasma).
-    └─> `usermod -aG sudo gacker` (Acople al anillo de administradores).
+    ├─> Creación de perfil y credenciales (`useradd -m`, `chpasswd`).
+    └─> Elevación de privilegios permanentes (`usermod -aG sudo gacker`).
                  │
                  ▼
- 🔐 [ FASE 6: Algoritmo Asimétrico RSA ]
-    ├─> Atacante: Genera par de claves locales (`llave_gacker`).
-    └─> Víctima : Reescribe silenciosamente su archivo `authorized_keys`.
+ 🔐 [ FASE 6: Algoritmo Asimétrico RSA y Permisos Estrictos ]
+    ├─> Creación de bóveda RSA (`mkdir -p ~/.ssh` y volcado a `authorized_keys`).
+    └─> Evasión Zero-Trust de OpenSSH (`chmod 700/600` y `chown -R gacker:gacker`).
                  │
                  ▼
  🎯 [ FASE 7: Transición Ininterrumpida ]
     ├─> Destrucción silente del Socket asíncrono temporal.
-    └─> Integración Posix PTY: `os.system("ssh -i llave_gacker gacker@<IP>")`
+    └─> Integración Posix PTY: `subprocess.run(['ssh', '-i', PATH_LLAVE, '-o', 'StrictHostKeyChecking=no', f'gacker@{args.target}'])`
                  │
                  ▼
  🎉 [ ACCESO TOTAL: Consolidación SSH del Auditor y Captura de Flag ]
@@ -147,7 +146,7 @@ Script ofensivo para explotación 100% automatizada
 
 El operador despacha el binario designando la Interfaz atacante (VPN) y el puerto de captura:
 ```bash
-python3 autoprick.py --target 10.10.x.x --lhost tun0 --lport 4444 --verbose
+python3 autoprick.py -t 10.10.x.x -l 192.168.x.x -p 4444 -v
 ```
 El log estándar (*Stdout*) verbalizará el colapso secuencial del servidor. El encriptado de la sesión, la inyección concurrente y el bypasseo final resultarán instanciando al operador dentro del núcleo como usuario Root en menos de 3 segundos interactivos.
 
@@ -157,11 +156,23 @@ El log estándar (*Stdout*) verbalizará el colapso secuencial del servidor. El 
 </div>
 </details>
 
+<details open>
+<summary><b>▸ Paso 3: Consolidación y Verificación de Privilegios</b></summary>
+<br>
+
+Una vez obtenida la sesión interactiva por SSH, validamos el control total sobre el servidor constatando que poseemos permisos de administrador de forma irrestricta. Ejecutamos comandos de verificación como `sudo whoami` para confirmar la identidad de `root`, y `ls -lah` para listar el sistema de archivos operando ya con total libertad y demostrando el éxito de la escalada y persistencia.
+
+> *(Anexo Visual Sugerido - `imagenes/poc2.png`)*
+<div align="center">
+  <img src="imagenes/poc2.png" alt="Consolidación SSH y Verificación Root" width="80%"/>
+</div>
+</details>
+
 ---
 
 ## 📁 6. Estructura del Proyecto Ofensivo
 
-La orquestación se compone de un ecosistema estandarizado de ficheros para facilitar el testeo de los tutores de Hacking Ético:
+La orquestación se compone de un ecosistema estandarizado de ficheros para facilitar el testeo del tutor de Hacking Ético:
 
 ```text
 PickleRick_Autopwn/
@@ -169,7 +180,8 @@ PickleRick_Autopwn/
 │   └── autoprick.py        # Código fuente documentado en Python 3 puro.
 ├── imagenes/               # Pruebas de validación dinámicas del ataque.
 │   ├── ayuda.png           # Captura del uso parametrizable de las flags (-h).
-│   └── poc.png             # Captura del resultado en vivo de la reverse shell.
+│   ├── poc.png             # Captura del resultado en vivo de la reverse shell.
+│   └── poc2.png            # Captura de la consola SSH como Root autenticado.
 ├── README.md               # Base explicativa documental (Arquitectura y Memoria).
 └── requirements.txt        # Dependencias exactas (Librerías HTTP Requests).
 ```
@@ -180,9 +192,9 @@ PickleRick_Autopwn/
 
 Al programar un *script* que inyecta comandos a través la red contra un recurso alojado en una VPN, me encontré con obstáculos reales de comunicación OSI. Decidí implementar las siguientes soluciones de Ingeniería a nivel de código para no depender de fallos humanos:
 
-* **Emulación de la tecla "Intro" en la Shell (`\n`):**
+**Emulación de la tecla "Intro" en la Shell (`\n`):**
     Cuando capturamos la conexión de la consola (*Reverse Shell*), no estamos ante una terminal normal y amigable (no hay interactividad *TTY*). Si la rutina de Python escupe todos los comandos de administración a la vez (`useradd`, `echo` de la clave SSH, etc.), el servidor ubuntu remoto se satura intentando leerlos como si fueran una sola palabra altísima y colapsa.
-    Para asegurar su digestión, programé que se añadiera un salto de línea (`\n`) y codificación de bytes `.encode()` explícitamente al final de cada envío. Esto simula milimétricamente una pulsación "Enter":
+    Para asegurar su digestión, programé que se incluyera explícitamente un salto de línea (`\n`) codificado en formato de bytes (usando la notación nativa `b"..."`) al final de cada orden sentenciada. Esto simula milimétricamente una pulsación "Enter":
     ```diff
     -  # Envío crudo: La Shell remota lo recibe todo junto como texto y colapsa.
     -  conexion.send(b"useradd -m -s /bin/bash gacker")
@@ -190,11 +202,11 @@ Al programar un *script* que inyecta comandos a través la red contra un recurso
     +  conexion.send(b"useradd -m -s /bin/bash gacker\n")
     ```
 
-* **El problema de la Sincronización de Puertos (*Race Conditions*):** 
-    Mi arquitectura se divide en dos Hilos de ejecución. Uno abre mi puerto escuchando peticiones, y el otro envía la inyección web a TryHackMe. En el laboratorio experimenté que a veces el servidor de Londres respondía **antes** de que mi máquina local estuviera escuchando plenamente, causando un fallo letal. 
-    Para reparar esta fuga de tiempo (*Race Condition*), añadí quirúrgicamente un `time.sleep(1)` en mi hilo. Mi puerto obtiene así una ventaja de 1 segundo de inicio estricto ante el servidor, asegurando que capture absolutamente siempre la inyección sin perder ningún paquete TCP.
+**El problema de la Sincronización de Puertos (*Race Conditions*):** 
+    Mi arquitectura se divide en dos Hilos de ejecución. Uno abre mi puerto escuchando peticiones, y el otro envía la inyección web a TryHackMe. En el laboratorio experimenté que a veces el servidor de Francia respondía **antes** de que mi máquina local estuviera escuchando plenamente, causando un fallo letal. 
+    Para reparar esta fuga de tiempo (*Race Condition*), añadí un `time.sleep(1)` en mi hilo. Mi puerto obtiene así una ventaja de 1 segundo de inicio estricto ante el servidor, asegurando que capture absolutamente siempre la inyección sin perder ningún paquete TCP.
 
-* **La política extrema de permisos de la clave SSH (`0600`):** 
+**La política extrema de permisos de la clave SSH (`0600`):** 
     Al invocar los comandos de Linux, el archivo de clave generada (`llave_gacker`) lo hereda con permisos de lectura abierta. Por políticas puras de seguridad *"Zero-Trust"*, el programa y cliente `OpenSSH` bloquean radicalmente el intento de conexión detectando una posible fuga.
     Como mi meta era la automatización 100%, utilicé directamente una llamada al sistema: `os.chmod(PATH, 0o600)`. Dicha orden restringe matemáticamente la llave obligando al programa criptográfico a confiar ciegamente en ella, y sellando así un acceso interactivo sin obstáculos.
 
@@ -206,11 +218,14 @@ El desarrollo de la operación `autoprick.py` sobrepasa con notoriedad el clási
 
 La conversión de una vulnerabilidad web mundana (*Broken Access Control*) en un programa ofuscado capaz de controlar dinámicamente el asincronismo de los *Sockets TCP*, orquestar configuraciones nativas de grupos DAC a ciegas en un sistema remoto, y autogestionar y transitar a la criptografía de curvas asimétricas para su persistencia total, certifica una aptitud formativa soberana. Este hito corrobora que para dominar la seguridad de una *host*, primero se debe concebir cómo funciona su núcleo bajo el capó. El auditor no solo vulnera, ahora, mediante ingeniería de código, automatiza su capacidad letal.
 
-### 📚 Bibliografía de Apoyo Corporativo
-* *The Open Web Application Security Project*. [OWASP Top 10 Vulnerabilities](https://owasp.org/Top10/).
-* *MITRE Corporation*. Matrices Tácticas y Técnicas Empresariales [MITRE ATT&CK®](https://attack.mitre.org/).
-* *Fundación Python*. Documentación Core sobre [*concurrencia y Sockets IPC*](https://docs.python.org/es/3/library/ipc.html).
-* *Exposición de Laboratorio:* [TryHackMe - Pickle Rick CTF](https://tryhackme.com/room/picklerick).
+### 📚 Bibliografía y Documentación Oficial
+* **Python Standard Library y Dependencias:**
+  * `requests`: Gestión de estado HTTP ([Docs](https://requests.readthedocs.io/)).
+  * `socket`: Interfaces de red asíncronas ([Docs](https://docs.python.org/es/3/library/socket.html)).
+  * `threading`: Concurrencia para *Reverse Shells* ([Docs](https://docs.python.org/es/3/library/threading.html)).
+  * `base64`: Transcodificación de *payloads* ([Docs](https://docs.python.org/es/3/library/base64.html)).
+  * `os`, `subprocess` y `argparse`: Interfaces nativas del OS y Menú CLI ([Docs](https://docs.python.org/es/3/library/)).
+* **Laboratorio Práctico:** [TryHackMe - Pickle Rick CTF](https://tryhackme.com/room/picklerick).
 
 <hr>
 <p align="center">

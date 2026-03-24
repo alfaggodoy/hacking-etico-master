@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  twisted-ctf:
+    build: .
+    container_name: twisted_ctf_all
+    ports:
+      - "9001:9001"   # C1  - Base64 Maze
+      - "9002:9002"   # C2  - XOR Cipher
+      - "9003:9003"   # C3  - Weak Hash Auth
+      - "9004:9004"   # C4  - Sandboxed REPL (jailbreak)
+      - "9005:9005"   # C5  - Simulated CMD Injection
+      - "9006:9006"   # C6  - Caesar Shift
+      - "9007:9007"   # C7  - Big Integer Sum
+      - "9008:9008"   # C8  - Guess the Number
+      - "9009:9009"   # C9  - JSON Access
+      - "9010:9010"   # C10 - Endianness Puzzle
+    restart: unless-stopped

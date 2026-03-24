@@ -10,6 +10,7 @@ venv/
 ENV/
 bin/
 lib/
+.escapa/
 
 # --- SISTEMA OPERATIVO ---
 # Archivos invisibles de Windows y Mac
@@ -49,3 +50,4 @@ passwords.txt
 # Evitar subir claves SSH personalizadas
 *llave*
 *.pub
+id_rsa

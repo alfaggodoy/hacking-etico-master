@@ -49,5 +49,6 @@ passwords.txt
 
 # Evitar subir claves SSH personalizadas
 *llave*
+!*.png
 *.pub
 id_rsa

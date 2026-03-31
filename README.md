@@ -20,44 +20,22 @@
 
 ## 📁 Contenido del Repositorio
 
-```
-hacking-etico-master/
-└── ctf/
-    ├── challs/                     ← 10 retos CTF sobre TCP con Twisted
-    │   ├── retos/                  ← c1.py … c10.py  (módulo Python)
-    │   ├── imagenes/               ← capturas pendientes de writeups
-    │   ├── server.py               ← runner unificado con Twisted
-    │   ├── Dockerfile
-    │   ├── docker-compose.yml
-    │   ├── solver_c3_bruteforce.py
-    │   ├── solver_c7_bigsum.py
-    │   └── README.md
-    ├── thm/
-    │   └── easy/
-    │       ├── pickle-rick/        ← Autopwn: RCE → Reverse Shell → Escalada → SSH
-    │       │   ├── archivo_pocs/   ← PoC-00 … PoC-09 (evolución del ataque)
-    │       │   ├── automatizacion/ ← autoprick.py (script final)
-    │       │   ├── imagenes/
-    │       │   └── README.md
-    │       └── wgel-ctf/           ← Recon → .ssh expuesto → sudo wget → root
-    │           ├── imagenes/       ← 19 capturas del writeup
-    │           └── README.md
-    └── laboratorios/
-        └── httprce-jailbreak/      ← Lab local: HTTP RCE API + Python Jailbreak
-            ├── imagenes/
-            ├── api_rce.py          ← Flask RESTful con endpoint de CMDi
-            ├── jailbreak.py        ← Shell interactiva con blacklist defectuosa
-            ├── exploit_jail.sh     ← Demo de bypass por base64
-            ├── requirements.txt
-            └── README.md
-```
+### 🛡️ Salas de TryHackMe
+*Writeups elaborados de máquinas vulnerables enfocadas al asalto integral (Metodología Caja Negra).*
 
-| Proyecto | Vectores practicados | Writeup |
-|:---|:---|:---:|
-| 🧩 **challs** | Criptografía, hashing, CMDi, aritmética, Python jailbreak | [README](ctf/challs/README.md) |
-| 🥒 **pickle-rick** | CMDi, RCE, Reverse Shell, escalada de privilegios, persistencia SSH | [README](ctf/thm/easy/pickle-rick/README.md) |
-| 🫠 **wgel-ctf** | Reconocimiento, enumeración web, clave SSH expuesta, sudo abuse | [README](ctf/thm/easy/wgel-ctf/README.md) |
-| 🔓 **httprce-jailbreak** | HTTP RCE directa, Python Jailbreak con blacklist bypasseable | [README](ctf/laboratorios/httprce-jailbreak/README.md) |
+| Room | Nivel | Vectores de Ataque | Writeup |
+|:---|:---:|:---|:---:|
+| 👊 **Brute It** | 🟢 Easy | Fuzzing web interactivo, crackeo de passphrase RSA y shadow leak | [📖 Leer](ctf/thm/easy/brute-it/README.md) |
+| 🫠 **Wgel CTF** | 🟢 Easy | Reconocimiento, enumeración web, clave SSH expuesta, sudo abuse | [📖 Leer](ctf/thm/easy/wgel-ctf/README.md) |
+| 🥒 **Pickle Rick** | 🟢 Easy | CMDi, RCE, Reverse Shell, escalada de privilegios, persistencia SSH | [📖 Leer](ctf/thm/easy/pickle-rick/README.md) |
+
+### 🧩 Laboratorios y CTFs Locales
+*Entornos desarrollados y aislados para experimentación de vulnerabilidades o scripting directo en Python.*
+
+| Nombre del Lab | Entorno | Técnicas y Vulnerabilidades Analizadas | Documentación |
+|:---|:---:|:---|:---:|
+| **10 Retos TCP** | Docker (Pwn) | Criptografía, hashing, scripting ofensivo, Python jailbreaks | [📖 Ver Desafíos](ctf/challs/README.md) |
+| **HTTP RCE Jailbreak** | Local (Flask) | HTTP RCE directa vía API, bypass de blacklists, evaluación remota | [📖 Ver Laboratorio](ctf/laboratorios/httprce-jailbreak/README.md) |
 
 ---
 

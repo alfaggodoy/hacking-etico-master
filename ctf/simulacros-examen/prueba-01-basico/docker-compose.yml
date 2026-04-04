@@ -1,0 +1,19 @@
+version: '3'
+services:
+  mainquest:
+    build: 
+      context: ./mainquest
+    ports:
+      - "2121:21"
+      - "80:80"
+      - "8000:8000"
+    container_name: exam_mainquest
+    hostname: main-target
+
+  sidequest:
+    build: 
+      context: ./sidequest
+    ports:
+      - "9000:9000"
+    container_name: exam_sidequest
+    hostname: side-target

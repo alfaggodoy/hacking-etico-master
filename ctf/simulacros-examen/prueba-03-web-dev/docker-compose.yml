@@ -1,0 +1,18 @@
+version: '3'
+services:
+  mainquest:
+    build: 
+      context: ./mainquest
+    ports:
+      - "80:80"
+    container_name: p3_mainquest
+    hostname: p3-server
+
+  sidequest:
+    build: 
+      context: ./sidequest
+    ports:
+      - "2222:22"
+      - "8080:8080"
+    container_name: p3_sidequest
+    hostname: p3-side

@@ -11,14 +11,44 @@
 
 <p align="center">
   <i>
-    Repositorio de prácticas, retos CTF y laboratorios del módulo de Hacking Ético.<br>
-    Este documento es el cuaderno de estudio del módulo — toda la teoría del temario documentada y enlazada con las prácticas de este repositorio.
+    Repositorio principal de prácticas, retos CTF y laboratorios en entornos aislados del módulo de Hacking Ético.<br>
+    Este documento asume la función de cuaderno de bitácora — toda la teoría del temario documentada operativamente y enlazada con la práctica.
   </i>
 </p>
 
 ---
 
-## 📁 Contenido del Repositorio
+> [!WARNING]
+> **Aviso Legal y Ético.** Todo el contenido de este repositorio tiene fines estricta y exclusivamente académicos. Las técnicas e inyecciones documentadas se han operado únicamente sobre infraestructura propia aislada, *dockers* levantados en *localhost*, o plataformas de entrenamiento autorizadas como TryHackMe. El uso de estas metodologías ofensivas sobre sistemas de terceros sin autorización explícita es un delito tipificado. El autor declina absolutamente toda responsabilidad derivada de extrapolaciones negligentes u omisión del marco legal.
+
+---
+
+## 📑 Índice General del Repositorio
+
+### 🎯 Bloque Práctico (Cajas Negras y Laboratorios)
+1. **[🛡️ Salas Operativas (TryHackMe)](#️-salas-de-tryhackme)**
+2. **[🧩 Laboratorios y CTFs Locales](#-laboratorios-y-ctfs-locales)**
+3. **[🎓 Simulacros de Examen Offline](#-simulacros-de-examen-caja-negra)**
+4. **[📖 Recursos y Cheatsheets](#-recursos-operativos)**
+
+### 📚 Bloque Teórico (Cuaderno de Módulo)
+1. [El Pentesting y sus Objetivos](#-1--pentesting)
+2. [Tipologías y Enfoques (Cajas)](#-2--tipos-de-pentesting)
+3. [Fases Estructurales del Ataque](#️-3--fases-del-pentesting)
+4. [Vulnerabilidades y Tipificación](#-4--vulnerabilidades--clasificación)
+5. [Identificación CVSS / CVE](#️-5--identificación-cve-y-cvss)
+6. [Bases de Datos de Explotación](#-6--consultar-vulnerabilidades)
+7. [Vulnerabilidades Críticas Web y OWASP 10](#-7--vulnerabilidades-web-y-owasp-top-10)
+8. [Ingeniería Inversa de Command Injection (CMDi)](#-8--command-injection-cmdi)
+9. [Bypass y Extracción vía SQLi](#️-9--sql-injection-sqli)
+10. [Anatomía de las Shells: Bind, Reverse y Jaulas](#-10--shells--bind-reverse-y-restringidas)
+11. [Reverse Shells, C2 y Arquitectura de Metasploit](#-11--reverse-shells-metasploit-y-c2)
+12. [Generación y Ofuscación de Malware con msfvenom](#-12--crear-malware-con-msfvenom)
+13. [Análisis Forense de Tráfico en Red](#-13--análisis-de-tráfico-de-reverse-shells)
+
+---
+
+## 📁 Contenido Práctico del Repositorio
 
 ### 🛡️ Salas de TryHackMe
 *Writeups elaborados de máquinas vulnerables enfocadas al asalto integral (Metodología Caja Negra).*
@@ -28,6 +58,8 @@
 | 👊 **Brute It** | 🟢 Easy | Fuzzing web interactivo, crackeo de passphrase RSA y shadow leak | [📖 Leer](ctf/thm/easy/brute-it/README.md) |
 | 🫠 **Wgel CTF** | 🟢 Easy | Reconocimiento, enumeración web, clave SSH expuesta, sudo abuse | [📖 Leer](ctf/thm/easy/wgel-ctf/README.md) |
 | 🥒 **Pickle Rick** | 🟢 Easy | CMDi, RCE, Reverse Shell, escalada de privilegios, persistencia SSH | [📖 Leer](ctf/thm/easy/pickle-rick/README.md) |
+| 🕵️ **Basic Pentesting** | 🟢 Easy | SMB Enumeration, Bruteforce SSH (Hydra), RSA cracking (John), SUID Vim escalada | [📖 Leer](ctf/thm/easy/basic-pentesting/README.md) |
+| 🤠 **Bounty Hacker** | 🟢 Easy | FTP anónimo, Ficheros sensibles, Bruteforce SSH, Escalada vía sudo tar | [📖 Leer](ctf/thm/easy/bounty-hacker/README.md) |
 
 ### 🧩 Laboratorios y CTFs Locales
 *Entornos desarrollados y aislados para experimentación de vulnerabilidades o scripting directo en Python.*
@@ -37,32 +69,30 @@
 | **10 Retos TCP** | Docker (Pwn) | Criptografía, hashing, scripting ofensivo, Python jailbreaks | [📖 Ver Desafíos](ctf/challs/README.md) |
 | **HTTP RCE Jailbreak** | Local (Flask) | HTTP RCE directa vía API, bypass de blacklists, evaluación remota | [📖 Ver Laboratorio](ctf/laboratorios/httprce-jailbreak/README.md) |
 
----
+### 🎓 Simulacros de Examen (Caja Negra)
+*Entornos contenerizados complejos para la preparación práctica del examen final del módulo.*
 
-## 📑 Índice Teórico
+| Laboratorio | Entorno | Técnicas y Vulnerabilidades Analizadas | Documentación |
+|:---|:---:|:---|:---:|
+| **Mock Exams (4 Fases)** | Docker | Explotación web, Escalada vertical, LFI, CMDi, Exfiltración ciega | [📖 Ir a la Sala de Pruebas](ctf/simulacros-examen/README.md) |
 
-1. [Pentesting](#-1--pentesting)
-2. [Tipos de Pentesting](#-2--tipos-de-pentesting)
-3. [Fases del Pentesting](#️-3--fases-del-pentesting)
-4. [Vulnerabilidades — Clasificación](#-4--vulnerabilidades--clasificación)
-5. [Identificación: CVE y CVSS](#️-5--identificación-cve-y-cvss)
-6. [Consultar Vulnerabilidades](#-6--consultar-vulnerabilidades)
-7. [Vulnerabilidades Web y OWASP Top 10](#-7--vulnerabilidades-web-y-owasp-top-10)
-8. [Command Injection (CMDi)](#-8--command-injection-cmdi)
-9. [SQL Injection (SQLi)](#️-9--sql-injection-sqli)
-10. [Shells — Bind, Reverse y Restringidas](#-10--shells--bind-reverse-y-restringidas)
-11. [Reverse Shells, Metasploit y C2](#-11--reverse-shells-metasploit-y-c2)
-12. [Crear Malware con msfvenom](#-12--crear-malware-con-msfvenom)
-13. [Análisis de Tráfico de Reverse Shells](#-13--análisis-de-tráfico-de-reverse-shells)
+### 📖 Recursos Operativos
+*Documentación técnica de consulta rápida para operaciones de campo (Cheatsheets).*
+
+| Documento | Formato | Contenido Principal | Acceso |
+|:---|:---:|:---|:---:|
+| **Guía Maestra de Pentesting** | Markdown | Escalada SUID, TTY interactiva, Reverse Shells, SearchSploit, CTF Offline | [📖 Consultar Manual](ctf/simulacros-examen/guia-pentesting.md) |
 
 ---
 
-> [!WARNING]
-> **Aviso legal.** Todo el contenido de este repositorio tiene fines exclusivamente académicos. Las técnicas documentadas se han aplicado únicamente sobre infraestructura propia o plataformas de entrenamiento como TryHackMe. El uso de estas técnicas sobre sistemas sin autorización expresa es ilegal y contravinene los marcos legales de cualquier jurisdicción. El autor declina toda responsabilidad por un uso indebido de esta información.
+---
+
+## 📖 Bloque Teórico
 
 ---
 
 ## 🔍 1 — Pentesting
+
 
 El **pentesting** —o prueba de penetración— es un proceso de evaluación de seguridad que consiste en realizar ataques simulados contra un sistema, red o aplicación con el objetivo de identificar y explotar vulnerabilidades de forma controlada. La diferencia fundamental entre un pentester y un atacante malicioso no está en las técnicas utilizadas, sino en el **marco ético y legal** bajo el que opera: un pentester actúa con autorización explícita del propietario del sistema con el fin de mejorar sus defensas, no de comprometerlas.
 

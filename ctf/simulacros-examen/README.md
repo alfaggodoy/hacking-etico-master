@@ -30,9 +30,9 @@
 
 ## 📌 1. Resumen Ejecutivo
 
-Esta sub-sección del repositorio es mi campo de pruebas definitivo previo al examen de Hacking Ético. No habiendo suficientes laboratorios offline prediseñados de Caja Negra, he estructurado y orquestado cuatro escenarios Docker efímeros de complejidad ascendente donde ninguno regala el acceso directo.
+Esta sub-sección del repositorio es mi campo de pruebas definitivo previo al examen de Hacking Ético. He estructurado y orquestado cuatro escenarios Docker efímeros de complejidad ascendente donde ninguno regala el acceso directo. Tras el análisis de las Side Quests originales, se ha procedido a una limpieza de aquellas que carecían de contexto de examen (Jailbreaks extremos o inyecciones ciegas aisladas), manteniendo un enfoque 100% orientado a la metodología de auditoría real.
 
-A lo largo de mis iteraciones de estudio, ejecutaré y resolveré cada uno de estos escenarios publicando aquí mismo los *Writeups* definitivos. Siguiendo mis documentaciones base, plasmaré con total crudeza y capturas de pantalla desde los primeros sondeos en `nmap` y derrapes web infructuosos, hasta la exfiltración gloriosa de la flag `root` definitiva y el comprometimiento de las Side Quests anexas.
+A lo largo de mis iteraciones de estudio, resolveré cada uno de estos escenarios publicando los *Writeups* definitivos. Plasmaré con total crudeza y capturas de pantalla desde los primeros sondeos en `nmap` y derrapes web infructuosos, hasta la exfiltración de la flag `root` definitiva.
 
 ---
 
@@ -48,10 +48,10 @@ Para afrontar estos Dockers con garantías y replicar las condiciones reales del
 
 | Entorno / CTF | Nivel | Vectores de Ataque | Writeup / Directorio |
 |:---|:---:|:---|:---:|
-| 👊 **Prueba 1 — El Básico** | 🟢 Easy | FTP backdoor, LFI, Crontabs hijack, Sudo wget | [⏳ Pendiente de resolución](prueba-01-basico) |
-| 🥷 **Prueba 2 — SUID Ninja** | 🟡 Med | CMDi directa, Blind injection, Python Library Hijacking, Sudo find | [⏳ Pendiente de resolución](prueba-02-suid-ninja) |
-| 🧑‍💻 **Prueba 3 — Web Dev** | 🟡 Med | Unrestricted file upload, SSH keys leak, Source code leak, Sudo less | [⏳ Pendiente de resolución](prueba-03-web-dev) |
-| 👹 **Prueba Final — Boss Stage** | 🔴 Hard | FTP shell, LFI to SSH, Library Hijacking, Sudo vim, Python Jailbreak Extremo | [⏳ Pendiente de resolución](prueba-04-final-boss) |
+| 👊 **Prueba 1 — El Básico** | 🟢 Easy | FTP backdoor, RCE PHP, Cronjob hijack, Sudo wget | [📖 Leer Writeup](prueba-01-basico) |
+| 🥷 **Prueba 2 — SUID Ninja** | 🟡 Med | Python Library Hijacking, Sudo find, SUID exploitation | [⏳ Pendiente](prueba-02-suid-ninja) |
+| 🧑‍💻 **Prueba 3 — Web Dev** | 🟡 Med | Unrestricted file upload, SSH keys leak, Source code leak, Sudo less | [⏳ Pendiente](prueba-03-web-dev) |
+| 👹 **Prueba Final — Boss Stage** | 🔴 Hard | FTP shell, LFI to SSH, Library Hijacking, Sudoers escalation | [⏳ Pendiente](prueba-04-final-boss) |
 
 ---
 
@@ -65,32 +65,41 @@ Para afrontar estos simulacros bajo un régimen estricto de Caja Negra offline, 
 | `gobuster` | Fuzzing dinámico inyectado a los directorios de los servidores HTTP/Apache levantados. |
 | `nc` (Netcat) | Emulador receptor instanciado localmente para captar las conexiones (Reverse Shells) y escupir payloads brutos. |
 | `ssh` | Utilidad pilar para aplicar inicios de sesión legítimos inyectando llaves RSA previamente filtradas por LFI (Data Leakage). |
-| `GTFOBins` | Bibliografía documental por excelencia para certificar la ruta crítica cuando toque elevar privilegios explotando binarios o pseudo-derechos `sudo`. |
+| `GTFOBins` | Bibliografía documental por excelencia (ahora desplegada 100% offline nativamente vía Docker) para certificar la ruta crítica cuando toque elevar privilegios. |
+| `RevShells` | Entorno visual contenedorizado vía Docker para generar "on-the-fly" payloads de reverse shells encriptados y bypasses para Netcat o bash. |
 
 ---
 
 ## 🚀 4. Instrucciones de Despliegue Técnico
 
-La infraestructura subyacente de cada prueba es 100% contenerizada, replicando cajas lógicas para aislar cada máquina víctima.
+La infraestructura subyacente de cada prueba es 100% contenerizada, replicando cajas lógicas aisladas. Dado que este entorno se lanza desde una máquina atacante local (p. ej. Kali Linux), es crucial verificar las dependencias modernas de Docker V2:
+
+**0. Requisitos Previos (Inicialización):**
+Es necesario tener instalado el módulo oficial de compose y encender el demonio (Kali no arranca servicios por defecto):
+```bash
+sudo apt update && sudo apt install docker.io docker-compose-plugin
+sudo systemctl start docker
+```
 
 **1. Levantar el laboratorio (Ejemplo Prueba 1):**
 Mediante terminal atacante me dirijo a la ruta elegida y empujo la orquestación en *modo detached*.
 ```bash
 cd prueba-01-basico
-sudo docker-compose up -d --build
+sudo docker compose up -d --build
 ```
 *(Se adhiere incondicionalmente el flag `--build` asegurando la purga y digestión inmaculada de la imagen para que las vulnerabilidades sean siempre vírgenes al despliegue).*
 
 **2. Localizar el Target (Targeting Activo):**
-Para focalizar el arsenal directamente a la coraza del contenedor real sin apuntar al `localhost` del daemon anfitrión:
+Para focalizar el arsenal directamente a la coraza del contenedor real sin apuntar al `localhost` del daemon anfitrión, saca primero el *NAME* exacto con `sudo docker ps` (¡fíjate en la última columna de la derecha!) y luego extrae su IP con un simple `grep`:
 ```bash
-sudo docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' p1_mainquest
+sudo docker inspect exam_mainquest | grep IPAddress
 ```
+*(Si te fijas en tu `docker ps`, "prueba-01-basico-mainquest" es la IMAGEN, pero el "NAME" oficial del contenedor al final de la línea es `exam_mainquest`).*
 
-**3. Anti-forense y Limpieza de Trazas:**
-Concluido el reto de facto, y previo a conformar el Writeup estructurado o quemar mis alas en la siguiente prueba, purgo el entorno matando los demonios y aniquilando huellas persistentes para evitar cruce malicioso de puertos:
+**3. Anti-forense y Limpieza de Trazas (Modo Efímero):**
+Concluido el reto de facto, purgo el entorno. Este comando es vital porque hace el entorno **100% efímero**: frena los contenedores, los aniquila físicamente, y con la flag `-v` destruye cualquier volumen o rastro de datos temporal. No deja ni las mijitas.
 ```bash
-sudo docker-compose down -v
+sudo docker compose down -v
 ```
 
 ---

@@ -10,11 +10,3 @@ services:
       - "2222:22"
     container_name: final_mainquest
     hostname: final-boss
-
-  sidequest:
-    build: 
-      context: ./sidequest
-    ports:
-      - "1337:1337"
-    container_name: final_sidequest
-    hostname: final-side

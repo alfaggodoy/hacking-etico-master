@@ -7,11 +7,3 @@ services:
       - "80:80"
     container_name: p2_mainquest
     hostname: p2-server
-
-  sidequest:
-    build: 
-      context: ./sidequest
-    ports:
-      - "9999:9999"
-    container_name: p2_sidequest
-    hostname: p2-side

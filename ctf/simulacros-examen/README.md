@@ -46,12 +46,12 @@ Para afrontar estos Dockers con garantías y replicar las condiciones reales del
 
 *Directorios de máquinas vulnerables enfocadas al asalto integral. Los enlaces a los Writeups mutarán de "Pendiente" a "Leer" a medida que complete los retos y su archivo fotográfico.*
 
-| Entorno / CTF | Nivel | Vectores de Ataque | Writeup / Directorio |
-|:---|:---:|:---|:---:|
-| 👊 **Prueba 1 — El Básico** | 🟢 Easy | FTP backdoor, RCE PHP, Cronjob hijack, Sudo wget | [📖 Leer Writeup](prueba-01-basico) |
-| 🥷 **Prueba 2 — SUID Ninja** | 🟡 Med | Python Library Hijacking, Sudo find, SUID exploitation | [⏳ Pendiente](prueba-02-suid-ninja) |
-| 🧑‍💻 **Prueba 3 — Web Dev** | 🟡 Med | Unrestricted file upload, SSH keys leak, Source code leak, Sudo less | [⏳ Pendiente](prueba-03-web-dev) |
-| 👹 **Prueba Final — Boss Stage** | 🔴 Hard | FTP shell, LFI to SSH, Library Hijacking, Sudoers escalation | [⏳ Pendiente](prueba-04-final-boss) |
+| Entorno / CTF | Nivel | Vectores de Ataque | Estado | Writeup |
+|:---|:---:|:---|:---:|:---:|
+| 👊 **Prueba 1 — El Básico** | 🟢 Easy | FTP backdoor, RCE PHP, Cronjob hijack, Sudo wget | ✅ Completo | [📖 Leer Writeup](prueba-01-basico) |
+| 🤷 **Prueba 2 — SUID Ninja** | 🟡 Med | Python Library Hijacking, Sudo find, SUID exploitation | ✅ Completo | [📖 Leer Writeup](prueba-02-suid-ninja) |
+| 🧑‍💻 **Prueba 3 — Web Dev** | 🟡 Med | Unrestricted file upload, SSH keys leak, Source code leak, Sudo less | ⏳ Pendiente | [📁 Directorio](prueba-03-web-dev) |
+| 👹 **Prueba Final — Boss Stage** | 🔴 Hard | FTP shell, LFI to SSH, Library Hijacking, Sudoers escalation | ⏳ Pendiente | [📁 Directorio](prueba-04-final-boss) |
 
 ---
 
@@ -107,4 +107,6 @@ sudo docker compose down -v
 <hr>
 <p align="center">
   <i>Material diseñado y elaborado como parte operativa del módulo de Hacking Ético — Máster en Ciberseguridad.</i>
+  <br><br>
+  <b>Gabriel Godoy Alfaro</b>
 </p>

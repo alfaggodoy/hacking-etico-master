@@ -457,4 +457,6 @@ Correct! Flag: CTF_TWH3{3nd14nn3ss}
 <hr>
 <p align="center">
   <i>Writeup elaborado como parte del módulo de Hacking Ético — Máster en Ciberseguridad.</i>
+  <br><br>
+  <b>Gabriel Godoy Alfaro</b>
 </p>

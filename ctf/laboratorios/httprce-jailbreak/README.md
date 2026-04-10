@@ -173,4 +173,6 @@ La web se queda "cargando" — señal de que la conexión TCP está abierta y el
 <hr>
 <p align="center">
   <i>Documentado como parte del módulo de Hacking Ético — Máster en Ciberseguridad.</i>
+  <br><br>
+  <b>Gabriel Godoy Alfaro</b>
 </p>

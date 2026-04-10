@@ -7,6 +7,11 @@
   <img src="https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white" alt="Docker">
   <img src="https://img.shields.io/badge/Módulo-Hacking%20Ético-darkred" alt="Módulo">
   <img src="https://img.shields.io/badge/Máster-Ciberseguridad-gold" alt="Máster">
+  <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License">
+</p>
+
+<p align="center">
+  <b>Gabriel Godoy Alfaro</b> — Máster en Ciberseguridad
 </p>
 
 <p align="center">
@@ -29,7 +34,8 @@
 1. **[🛡️ Salas Operativas (TryHackMe)](#️-salas-de-tryhackme)**
 2. **[🧩 Laboratorios y CTFs Locales](#-laboratorios-y-ctfs-locales)**
 3. **[🎓 Simulacros de Examen Offline](#-simulacros-de-examen-caja-negra)**
-4. **[📖 Recursos y Cheatsheets](#-recursos-operativos)**
+4. **[🎓 Examen Final](#-examen-final-caja-negra)**
+5. **[📖 Recursos y Cheatsheets](#-recursos-operativos)**
 
 ### 📚 Bloque Teórico (Cuaderno de Módulo)
 1. [El Pentesting y sus Objetivos](#-1--pentesting)
@@ -72,9 +78,16 @@
 ### 🎓 Simulacros de Examen (Caja Negra)
 *Entornos contenerizados complejos para la preparación práctica del examen final del módulo.*
 
-| Laboratorio | Entorno | Técnicas y Vulnerabilidades Analizadas | Documentación |
-|:---|:---:|:---|:---:|
-| **Mock Exams (4 Fases)** | Docker | Explotación web, Escalada vertical, LFI, CMDi, Exfiltración ciega | [📖 Ir a la Sala de Pruebas](ctf/simulacros-examen/README.md) |
+| Laboratorio | Entorno | Técnicas y Vulnerabilidades Analizadas | Estado | Documentación |
+|:---|:---:|:---|:---:|:---:|
+| **Mock Exams (4 Fases)** | Docker | Explotación web, Escalada vertical, LFI, CMDi, Exfiltración ciega | ✅ Completo (2/4) + 🎓 Examen | [📖 Ir a la Sala de Pruebas](ctf/simulacros-examen/README.md) |
+
+### 🎓 Examen Final (Caja Negra)
+*Compromiso total de infraestructura real en modalidad Caja Negra. Entrega oficial del módulo de Hacking Ético.*
+
+| Escenario | Vectores de Ataque | Autor | Documentación |
+|:---|:---|:---:|:---:|
+| **Examen Final — Máster Ciberseguridad** | FTP anon, LFI→RCE, Horizontal (SUID/Crontab), Vertical (Crontab Root), Persistencia SSH | Gabriel Godoy Alfaro | [📖 Leer Writeup](ctf/examen-final/README.md) |
 
 ### 📖 Recursos Operativos
 *Documentación técnica de consulta rápida para operaciones de campo (Cheatsheets).*
@@ -82,8 +95,6 @@
 | Documento | Formato | Contenido Principal | Acceso |
 |:---|:---:|:---|:---:|
 | **Guía Maestra de Pentesting** | Markdown | Escalada SUID, TTY interactiva, Reverse Shells, SearchSploit, CTF Offline | [📖 Consultar Manual](ctf/simulacros-examen/guia-pentesting.md) |
-
----
 
 ---
 
@@ -668,4 +679,6 @@ El tráfico generado por una reverse shell activa tiene un conjunto de caracter�
     Cuaderno de estudio del módulo de Hacking Ético — Máster en Ciberseguridad.<br>
     Documento vivo que crece con las prácticas del módulo.
   </i>
+  <br><br>
+  <b>Gabriel Godoy Alfaro</b> — Máster en Ciberseguridad
 </p>

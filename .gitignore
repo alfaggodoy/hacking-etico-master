@@ -1,10 +1,7 @@
-# --- PYTHON (Lo más importante para tu automatización) ---
-# Ignora las carpetas de ejecución de Python
+# --- PYTHON ---
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Ignora los entornos virtuales (¡nunca se suben!)
 .venv/
 venv/
 ENV/
@@ -13,42 +10,63 @@ lib/
 .escapa/
 
 # --- SISTEMA OPERATIVO ---
-# Archivos invisibles de Windows y Mac
 .DS_Store
 Thumbs.db
 desktop.ini
 
 # --- HACKING ÉTICO & SEGURIDAD ---
-# Archivos de capturas de red (suelen ser enormes)
+# Capturas de red (muy pesadas)
 *.pcap
 *.pcapng
 *.cap
 
-# Archivos de logs y resultados temporales
+# Logs y outputs temporales
 *.log
 *.report
 nmap/*.xml
 nmap/*.nmap
 
-# Archivos sensibles (¡No queremos fugas de información!)
+# Archivos sensibles — nunca al repo
 .env
 secretos.txt
 passwords.txt
 *.key
 *.pem
 
-# Diccionarios (No subas el rockyou.txt, pesa demasiado)
+# Diccionarios y wordlists pesadas
 *.wordlist
 *.dict
 *.txt_ext
+*.lst
 
-# --- EDITORES DE CÓDIGO ---
+# Metasploit — sesiones y scripts
+*.msf4
+*.rc
+msfconsole.log
+.msf4/
+
+# John The Ripper — ficheros de crackeo
+*.pot
+*.session
+
+# Payloads compilados (msfvenom output)
+*.exe
+*.elf
+*.apk
+
+# --- EDITORES ---
 .vscode/
 .idea/
 *.ovpn
 
-# Evitar subir claves SSH personalizadas
+# Claves SSH personales
 *llave*
 !*.png
 *.pub
 id_rsa
+
+# --- EXAMEN FINAL — Evidencias sensibles ---
+# Solo se sube README.md e imagenes/, NO los scripts ni zips de evidencia
+ctf/examen-final/evidencias/
+ctf/examen-final/*.zip
+ctf/examen-final/*.py

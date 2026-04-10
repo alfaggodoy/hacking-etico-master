@@ -1,10 +1,12 @@
 <h1 align="center">🥒 Operación "Pickle Rick": Desarrollo Autopwn</h1>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Plataforma-TryHackMe-red?logo=tryhackme&logoColor=white" alt="TryHackMe">
+  <img src="https://img.shields.io/badge/Dificultad-Easy-brightgreen.svg" alt="Easy">
+  <img src="https://img.shields.io/badge/OS-Linux-informational?logo=linux&logoColor=white" alt="Linux">
   <img src="https://img.shields.io/badge/Python-3.x-blue.svg?logo=python&logoColor=white" alt="Python 3">
   <img src="https://img.shields.io/badge/Módulo-Hacking%20Ético-darkred.svg?logo=hackthebox&logoColor=white" alt="Hacking Ético">
   <img src="https://img.shields.io/badge/Grado-Máster%20en%20Ciberseguridad-gold.svg" alt="Máster Ciberseguridad">
-  <img src="https://img.shields.io/badge/Base-ASIR-informational?logo=linux&logoColor=white" alt="Base ASIR">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License MIT">
 </p>
 
@@ -230,4 +232,6 @@ La conversión de una vulnerabilidad web mundana (*Broken Access Control*) en un
 <hr>
 <p align="center">
   <i>Desarrollado como memoria técnica para el módulo de Hacking Ético.</i>
+  <br><br>
+  <b>Gabriel Godoy Alfaro</b>
 </p>

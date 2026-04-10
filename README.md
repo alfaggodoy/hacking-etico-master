@@ -74,6 +74,7 @@
 |:---|:---:|:---|:---:|
 | **10 Retos TCP** | Docker (Pwn) | Criptografía, hashing, scripting ofensivo, Python jailbreaks | [📖 Ver Desafíos](ctf/challs/README.md) |
 | **HTTP RCE Jailbreak** | Local (Flask) | HTTP RCE directa vía API, bypass de blacklists, evaluación remota | [📖 Ver Laboratorio](ctf/laboratorios/httprce-jailbreak/README.md) |
+| **📡 Proxmark3 — RFID Audit** | Hardware (Proxmark3 Easy) | Ingeniería inversa RFID, extracción de claves MIFARE, Replay Attack, Value Block crafting | [📖 Ver Laboratorio](ctf/laboratorios/proxmark3-mifare/README.md) |
 
 ### 🎓 Simulacros de Examen (Caja Negra)
 *Entornos contenerizados complejos para la preparación práctica del examen final del módulo.*
